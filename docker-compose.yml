@@ -2,40 +2,59 @@ version: '3.8'
 
 services:
   api:
-      build: .
-          ports:
-                - "8000:8000"
-                    env_file:
-                          - .env
-                              depends_on:
-                                    - postgres
-                                          - redis
-                                              volumes:
-                                                    - .:/app
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+      - chromadb
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
 
-                                                      postgres:
-                                                          image: postgres:15
-                                                              environment:
-                                                                    POSTGRES_USER: user
-                                                                          POSTGRES_PASSWORD: password
-                                                                                POSTGRES_DB: marketing
-                                                                                    ports:
-                                                                                          - "5432:5432"
-                                                                                              volumes:
-                                                                                                    - postgres_data:/var/lib/postgresql/data
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: marketing_user
+      POSTGRES_PASSWORD: marketing_password
+      POSTGRES_DB: marketing_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marketing_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-                                                                                                      redis:
-                                                                                                          image: redis:7
-                                                                                                              ports:
-                                                                                                                    - "6379:6379"
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-                                                                                                                      chromadb:
-                                                                                                                          image: chromadb/chroma
-                                                                                                                              ports:
-                                                                                                                                    - "8001:8000"
-                                                                                                                                        volumes:
-                                                                                                                                              - chroma_data:/chroma/chroma
+  chromadb:
+    image: chromadb/chroma:latest
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    environment:
+      - CHROMA_DB_IMPL=duckdb+parquet
+      - PERSIST_DIRECTORY=/chroma/chroma
 
-                                                                                                                                              volumes:
-                                                                                                                                                postgres_data:
-                                                                                                                                                  chroma_data:
+volumes:
+  postgres_data:
+  redis_data:
+  chroma_data:
