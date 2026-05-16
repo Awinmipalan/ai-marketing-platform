@@ -1,26 +1,22 @@
+"""Simple in-repo vector store stub for ChromaDB.
+Replace with chromadb client integration for production.
+"""
+from typing import Dict, Any, List
 import logging
-
-import chromadb
 
 logger = logging.getLogger(__name__)
 
-client = chromadb.Client()
-collection = client.create_collection(name="marketing_memory")
+# In-memory store for demo
+_STORE: List[Dict[str, Any]] = []
 
 
-def save_memory(text: str) -> None:
-    try:
-        collection.add(documents=[text], ids=[str(hash(text))])
-        logger.info("Memory saved successfully")
-    except Exception as e:
-        logger.error(f"Save memory error: {e}")
-        raise e
+def save_item(item: Dict[str, Any]) -> None:
+    _STORE.append(item)
+    logger.info("Item saved to in-memory vector store. Total=%d", len(_STORE))
 
 
-def query_memory(query: str) -> list:
-    try:
-        results = collection.query(query_texts=[query], n_results=5)
-        return results["documents"]
-    except Exception as e:
-        logger.error(f"Query memory error: {e}")
-        raise e
+def query(q: str) -> List[Dict[str, Any]]:
+    # Very naive search
+    results = [it for it in _STORE if q.lower() in str(it).lower()]
+    logger.info("Query for '%s' returned %d results", q, len(results))
+    return results

@@ -1,22 +1,15 @@
+"""Sentiment analyzer stub using transformers (mocked).
+Replace with real HuggingFace pipeline calls for production.
+"""
+from typing import Dict, Any
 import logging
-from transformers import pipeline
 
 logger = logging.getLogger(__name__)
 
-classifier = pipeline(
-    "sentiment-analysis",
-    model="distilbert-base-uncased-finetuned-sst-2-english",
-)
 
-
-def analyze_sentiment(text: str) -> dict:
-    try:
-        result = classifier(text[:512])
-        return {
-            "label": result[0]["label"],
-            "score": round(result[0]["score"], 4),
-            "text": text,
-        }
-    except Exception as e:
-        logger.error(f"Sentiment error: {e}")
-        raise e
+def analyze_text(text: str) -> Dict[str, Any]:
+    logger.info("analyze_text called")
+    # TODO: Use transformers pipeline('sentiment-analysis')
+    score = 0.1 if "bad" in text.lower() else 0.9
+    label = "NEGATIVE" if score < 0.5 else "POSITIVE"
+    return {"label": label, "score": score}

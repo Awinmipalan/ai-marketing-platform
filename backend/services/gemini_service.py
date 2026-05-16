@@ -1,23 +1,15 @@
-import google.generativeai as genai
-from dotenv import load_dotenv
+"""Gemini service stub.
+This module provides a small wrapper around the Google Generative AI (Gemini) client.
+For now it returns mocked responses. Replace with real API calls and authentication.
+"""
+from typing import Dict, Any
 import logging
-import os
-
-load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-API_KEY = os.getenv("GOOGLE_API_KEY")
 
-genai.configure(api_key=API_KEY)
-
-model = genai.GenerativeModel("gemini-2.5-pro")
-
-
-async def ask_gemini(prompt: str) -> str:
-    try:
-            response = model.generate_content(prompt)
-                    return response.text
-                        except Exception as e:
-                                logger.error(f"Gemini error: {e}")
-                                        return f"Error: {str(e)}"
+def generate_insight(prompt: str) -> Dict[str, Any]:
+    """Generate an insight from Gemini. Replace with real client call."""
+    logger.info("generate_insight called")
+    # TODO: integrate google-generativeai client
+    return {"prompt": prompt, "insight": "This is a mocked insight from Gemini."}

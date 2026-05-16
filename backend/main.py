@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routes import router
 import logging
+
+# Import the router from backend.api (created below)
+from backend.api.routes import router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -9,7 +11,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="AI Marketing Intelligence Platform",
     description="Autonomous AI marketing analysis platform",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # CORS Configuration - restrict origins in production
